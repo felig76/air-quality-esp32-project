@@ -85,7 +85,7 @@ void loop() {
   // Cálculo de la medición promedio cada 200 milisegundos
   acumuladorMediciones += map(((analogRead(PIN_MQ135) - 20) * 3.04), 0, 1023, -40, 125); // mq135_sensor.getCorrectedPPM(temperature, humidity); // analogRead(PIN_SENSOR_MQ135)
   contadorMediciones += 1;
-  if ((millis() - lastValueTime) >= 300){
+  if ((millis() - lastValueTime) >= 200){
     medicion = acumuladorMediciones / contadorMediciones;
     contadorMediciones = 0;
     acumuladorMediciones = 0;
