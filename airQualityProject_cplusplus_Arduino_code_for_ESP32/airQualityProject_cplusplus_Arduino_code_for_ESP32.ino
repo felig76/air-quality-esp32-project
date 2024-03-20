@@ -9,8 +9,8 @@
 #include <SPI.h>
 #include <Adafruit_SSD1306.h>
 // Variables para la conexión wifi
-const char* ssid     = "BA Escuela"; // "Fibertel WiFi836 2.4GHz";
-const char* password = ""; // "01425986436";
+const char* ssid     = "BA Escuela";
+const char* password = "";
 const char* serverName = "https://airqualityproject.000webhostapp.com/post-esp-data.php";
 String apiKeyValue = "tPmAT5Ab3j7F9";
 String sensorName = "MQ135";
@@ -68,10 +68,14 @@ void setup() {
   }
   // Begin de WiFimq135_sensor.getPPM()
   WiFi.begin(ssid, password);
-  Serial.println("Conectando");
-  while(WiFi.status() != WL_CONNECTED) { 
+  int intentosConexionWifi = 0;
+  while((WiFi.status() != WL_CONNECTED) && intentosConexionWifi<3) { 
+    Serial.print("Intentando conexión... (");}
+    Serial.print(intentosConexionWifi)
+    Serial.println(")")
     delay(500);
     Serial.print(".");
+    intentosConexionWifi += 1;
   }
   Serial.println("");
   Serial.print("Conectado a WiFi con la siguiente ip: ");
@@ -156,7 +160,7 @@ void loop() {
   display.display(); // Se printean en el display todos los elementos guardados al mismo tiempo
 
   // Se detecta el estado del pulsador
-  if (digitalRead(PIN_PULSADOR) == LOW && (millis() - delayPulsador >= 100)){
+  if (digitalRead(PIN_PULSADOR) == LOW && (millis() - delayPulsador >= 500)){
     modoFacil = !modoFacil;
     delayPulsador = millis();
   }
