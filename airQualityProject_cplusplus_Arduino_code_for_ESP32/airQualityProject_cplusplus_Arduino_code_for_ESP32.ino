@@ -30,7 +30,7 @@ const int PIN_PULSADOR = 23;
 const int PIN_LED = 19;
 #define PIN_MQ135 A7
 // Variables del flujo y valores del programa
-bool modoFacil = true;
+bool modoFacil = false;
 int alarma = 0;
 int acumuladorMediciones = 0;
 int contadorMediciones = 0;
@@ -53,10 +53,10 @@ const unsigned char bitmap_calavera [] PROGMEM = {
 // Medición inicial
 int medicion = map(((analogRead(PIN_MQ135) - 20) * 3.04), 0, 1023, -40, 125);
 
-
 void setup() {
   // Puerto serie
   Serial.begin(115200);
+  Serial.println("Iniciación de puerto serie.");
   // pinModes de alarma y pulsador
   pinMode(PIN_BUZZER, OUTPUT);
   pinMode(PIN_PULSADOR, INPUT_PULLUP);
@@ -65,14 +65,17 @@ void setup() {
   if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
     Serial.println(F("SSD1306 allocation failed"));
     for(;;);
+  }else{
+    Serial.println("Iniciación de display.");
   }
-  // Begin de WiFimq135_sensor.getPPM()
+  // Begin de WiFi
   WiFi.begin(ssid, password);
   int intentosConexionWifi = 0;
-  while((WiFi.status() != WL_CONNECTED) && intentosConexionWifi<3) { 
-    Serial.print("Intentando conexión... (");}
-    Serial.print(intentosConexionWifi)
-    Serial.println(")")
+  Serial.println("Se intentará una conexión wifi.");
+  while((WiFi.status() != WL_CONNECTED) && (intentosConexionWifi<3)) { 
+    Serial.print("Intentando conexión... (");
+    Serial.print(intentosConexionWifi);
+    Serial.println(")");
     delay(500);
     Serial.print(".");
     intentosConexionWifi += 1;
@@ -160,7 +163,7 @@ void loop() {
   display.display(); // Se printean en el display todos los elementos guardados al mismo tiempo
 
   // Se detecta el estado del pulsador
-  if (digitalRead(PIN_PULSADOR) == LOW && (millis() - delayPulsador >= 500)){
+  if (digitalRead(PIN_PULSADOR) == LOW && ((millis() - delayPulsador) >= 500)){
     modoFacil = !modoFacil;
     delayPulsador = millis();
   }
